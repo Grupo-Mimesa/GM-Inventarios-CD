@@ -13,7 +13,7 @@ from datetime import datetime
 
 def get_image():
     global img_data
-    url = "https://github.com/SindromeDeLuis/Inventarios-CD-Mimesa/blob/main/assets/GM%20Logo-2.png?raw=true"
+    url = "https://github.com/Grupo-Mimesa/GM-Inventarios-CD/blob/main/assets/GM%20Logo-2.png?raw=true"
     response = requests.get(url)
     if response.status_code == 200:
         img_data = response.content
@@ -102,6 +102,7 @@ class SecondWindow(QWidget, QApplication):
         # SI SE QUIERE CAMBIAR LA CANTIDAD DE PALETAS POR DEFECTO CAMBIAR AQUI, POR DEFECTO 30
         self.cantidad_de_paletas_a_enviar = 30
         self.iteraciones = 0
+        self.historial_iteraciones = []
         width, height = self.screens()[0].size().toTuple()
         height = height-70
         self.setFixedSize(width, height)  # (1200, 600)
@@ -238,7 +239,7 @@ class SecondWindow(QWidget, QApplication):
             "background-color: #94cc1c; color: white; font: 14pt Arial;")
         self.button1.setFixedSize(250, 55)
         self.button1.move(width-250-25, 110)
-        self.button1.clicked.connect(self.guardarSj)
+        self.button1.clicked.connect(self.save_sj)
 
         # Reiniciar proceso Botón dentro del QFrame
         self.reset_table_button = QPushButton("Reiniciar", self.tree_frame)
@@ -324,7 +325,7 @@ class SecondWindow(QWidget, QApplication):
         self.table.setHorizontalHeaderLabels(self.columns_to_display)
         self.table.resizeColumnsToContents()
         self.table.setEditTriggers(QAbstractItemView.DoubleClicked)
-        self.table.cellChanged.connect(self.calculo_Manual)
+        self.table.cellChanged.connect(self.manual_adjustment)
 
         # LLamar la funcion que calcula todo
         self.update_table()
@@ -375,23 +376,28 @@ class SecondWindow(QWidget, QApplication):
                             'Inv en Origen TM dupli', 'Inv en Destino TM', 'Planificado TM', 'Tránsito TM']
         self.df[columns_to_round] = self.df[columns_to_round].round(5)
 
-    def update_table(self):
-
-        # Se Toman los datos de filtrado que estan en los comboxs y se hace una copia
+    def get_filtered_df(self):
         selected_localidad = self.localidades_combobox.currentText()
         selected_categoria = self.categorias_combobox.currentText()
-        ordenar_por = self.OrdenarPor_combobox.currentText()
-        nivel = self.Nivel_combobox.currentText()
+
         filtered_df = self.df.copy()
 
-        # Filtrar el DataFrame
         if selected_localidad:
             filtered_df = filtered_df[filtered_df['Localidad']
                                       == selected_localidad]
-        if selected_categoria:
-            if selected_categoria != "TODAS":
-                filtered_df = filtered_df[filtered_df['Categoria']
-                                          == selected_categoria]
+
+        if selected_categoria and selected_categoria != "TODAS":
+            filtered_df = filtered_df[filtered_df['Categoria']
+                                      == selected_categoria]
+
+        return filtered_df
+
+    def update_table(self):
+
+        ordenar_por = self.OrdenarPor_combobox.currentText()
+        nivel = self.Nivel_combobox.currentText()
+
+        filtered_df = self.get_filtered_df()
 
         # Se duplican los valores de algunas colunmas como los duplicados o % nuevo simulado con Targer original
         # Para poder hacer la primera iteracion
@@ -402,7 +408,7 @@ class SecondWindow(QWidget, QApplication):
         filtered_df['Inv en Origen TM dupli'] = filtered_df['Inv en Origen TM']
         filtered_df['Inv Final en Origen TM'] = filtered_df['Inv en Origen TM']
 
-        # palabra de control para el ciclo
+        # Palabra de control para el ciclo
         paletas_agregadas = 0
         # Lista de pedidos que no pueden despacharle nada por falta de inventario
         procesados = set()
@@ -520,7 +526,9 @@ class SecondWindow(QWidget, QApplication):
 
         self.label_iteraciones.setText(f"Iteraciones: {self.iteraciones}")
 
-    def calculo_Manual(self, row, column):
+        self.current_df = filtered_df.copy()
+
+    def manual_adjustment(self, row, column):
         if (column == 20):
             transit_tm = float(self.table.item(row, 12).text())
             planned_tm = float(self.table.item(row, 11).text())
@@ -565,13 +573,13 @@ class SecondWindow(QWidget, QApplication):
         else:
             pass
 
-    def guardarSj(self):
+    def save_sj(self):
         try:
             selected_localidad = self.localidades_combobox.currentText().lower()
             selected_categoria = self.categorias_combobox.currentText().lower()
 
             if not selected_localidad or not selected_categoria:
-                self.mostrarMensaje(
+                self.show_message(
                     "Error", "Debe seleccionar una localidad y una categoría.", tipo='error')
                 return
 
@@ -579,7 +587,7 @@ class SecondWindow(QWidget, QApplication):
                 i).text().lower() for i in range(self.table.columnCount())]
 
             if 'localidad' not in column_names or 'categoria' not in column_names:
-                self.mostrarMensaje(
+                self.show_message(
                     "Error", "Las columnas 'localidad' y 'categoria' no están presentes en la tabla.", tipo='error')
                 return
 
@@ -646,7 +654,7 @@ class SecondWindow(QWidget, QApplication):
                             self.df.at[idx, 'Planificado TM'] += Paleta_A_TM
 
             if not filtered_data:
-                self.mostrarMensaje(
+                self.show_message(
                     "Información", "No se encontraron datos que coincidan con los criterios seleccionados.")
                 return
 
@@ -658,19 +666,40 @@ class SecondWindow(QWidget, QApplication):
                 selected_categoria.upper()}_{timestamp}.xlsx'
             script_dir = os.path.dirname(os.path.abspath(__file__))
             new_file_path = os.path.join(script_dir, file_name)
-            df.to_excel(new_file_path, index=False)
-            self.mostrarMensaje("Información", f"El archivo '{
-                                file_name}' fue creado con éxito.")
+            columnas_a_quitar = [
+                'Código + Descripción del producto a despachar duplicado 1',
+                "Inv en Origen TM dupli",
+                'Código + Descripción del producto a despachar duplicado 2',
+                '% Target Original dupli',
+                '% Con Corrección dupli'
+            ]
+            df_filtrado = self.current_df.copy()
+            df_filtrado = df_filtrado.drop(
+                columns=columnas_a_quitar, errors='ignore')
+
+            df_iteracion = df_filtrado.copy()
+            df_iteracion.insert(0, 'Iteración', self.iteraciones + 1)
+            self.historial_iteraciones.append(df_iteracion)
+
+            df_final = pd.concat(self.historial_iteraciones, ignore_index=True)
+
+            with pd.ExcelWriter(new_file_path, engine='openpyxl') as writer:
+                df.to_excel(writer, sheet_name='Propuesta SJ', index=False)
+                df_final.to_excel(
+                    writer, sheet_name='Iteraciones', index=False)
+            self.show_message("Información", f"El archivo '{
+                file_name}' fue creado con éxito.")
             self.iteraciones += 1
             self.update_table()
         except Exception as e:
-            self.mostrarMensaje(
+            self.show_message(
                 "Error", f"Se produjo un error: {e}", tipo='error')
 
     def reset_table(self):
         self.df = pd.read_excel(self.file_path, skiprows=2)
         self.line_edit.setText(str(self.cantidad_de_paletas_a_enviar))
         self.iteraciones = 0
+        self.historial_iteraciones = []
         self.set_dataframe()
         self.update_table()
 
@@ -688,7 +717,7 @@ class SecondWindow(QWidget, QApplication):
             print(f"Error al convertir porcentaje: {e}")
             return 0.0  # O cualquier valor por defecto que consideres apropiado
 
-    def mostrarMensaje(self, titulo, mensaje, tipo='informacion'):
+    def show_message(self, titulo, mensaje, tipo='informacion'):
         msg_box = QMessageBox()
         msg_box.setWindowTitle(titulo)
         msg_box.setText(mensaje)
