@@ -338,14 +338,15 @@ class SecondWindow(QWidget, QApplication):
 
     def set_dataframe(self):
         # Cargar el archivo Excel
-        self.df = pd.read_excel(self.file_path, skiprows=2)
+        self.original_df = pd.read_excel(self.file_path, skiprows=2)
+        self.df = self.original_df.copy()
 
         # Definir las nuevas columnas
         self.new_columns = [
             'Branchplant Origen', 'Branchplant Destino', 'Localidad', 'Categoria', 'FAMILIA 3',
             'Código + Descripción del producto a despachar', 'UOM Prim', 'Factor TM/PL', 'Factor Prim/PL', 'Inv en Origen TM',
             'Inv en Destino TM', 'Planificado TM', 'Tránsito TM', 'Target de Inventario',
-            '% Target Original',
+            '% Target Original'
         ]
 
         # Renombrar las columnas existentes para que coincidan con las nuevas
@@ -685,6 +686,8 @@ class SecondWindow(QWidget, QApplication):
 
             df_iteracion = df_filtrado.copy()
             df_iteracion.insert(0, 'Iteración', self.iteraciones + 1)
+            df_iteracion.insert(
+                1, 'Fecha Data', self.original_df['Fecha Data'].iloc[0])
             self.historial_iteraciones.append(df_iteracion)
 
             df_final = pd.concat(self.historial_iteraciones, ignore_index=True)
@@ -693,11 +696,13 @@ class SecondWindow(QWidget, QApplication):
                 df.to_excel(writer, sheet_name='Propuesta SJ', index=False)
                 df_final.to_excel(
                     writer, sheet_name='Iteraciones', index=False)
+
             self.show_message("Información", f"El archivo '{
                 file_name}' fue creado con éxito.")
             self.iteraciones += 1
             self.update_table()
         except Exception as e:
+            print(f"Error al guardar el archivo: {e}")
             self.show_message(
                 "Error", f"Se produjo un error: {e}", tipo='error')
 
