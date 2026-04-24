@@ -21,6 +21,12 @@ def get_base_path():
     return os.path.dirname(os.path.abspath(__file__))
 
 
+def get_app_path():
+    if getattr(sys, 'frozen', False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
 class MainWindow(QWidget):
 
     def __init__(self):
@@ -664,7 +670,7 @@ class SecondWindow(QWidget, QApplication):
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
             file_name = f'Subida_Sj_{selected_localidad.upper()}_{
                 selected_categoria.upper()}_{timestamp}.xlsx'
-            script_dir = get_base_path()
+            script_dir = get_app_path()
             new_file_path = os.path.join(script_dir, file_name)
             columnas_a_quitar = [
                 'Código + Descripción del producto a despachar duplicado 1',
