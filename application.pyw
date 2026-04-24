@@ -7,19 +7,18 @@ import pandas as pd
 import math
 import os
 import sys
-import requests
 from datetime import datetime
 
 
 def get_image():
-    global img_data
-    url = "https://github.com/Grupo-Mimesa/GM-Inventarios-CD/blob/main/assets/GM%20Logo-2.png?raw=true"
-    response = requests.get(url)
-    if response.status_code == 200:
-        img_data = response.content
-    else:
-        img_data = None
-        print("Error al descargar la imagen")
+    path = os.path.join(get_base_path(), "assets/GM Logo-2.png")
+    return path
+
+
+def get_base_path():
+    if getattr(sys, 'frozen', False):
+        return sys._MEIPASS
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 class MainWindow(QWidget):
@@ -58,9 +57,9 @@ class MainWindow(QWidget):
         # Crear imagen logo
         self.contenedor_imagen = QWidget()
         self.contenedor_imagen.setGeometry(150, 200, 50, 50)
-        get_image()
+        path = get_image()
         self.pixmap = QPixmap()
-        self.pixmap.loadFromData(img_data)
+        self.pixmap.load(path)
         self.imagen = QLabel()
         self.imagen.setPixmap(self.pixmap)
         resized_pixmap = self.pixmap.scaled(
@@ -92,7 +91,7 @@ class MainWindow(QWidget):
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle("Advertencia")
         msg_box.setText(message)
-        msg_box.exec_()
+        msg_box.exec()
 
 
 class SecondWindow(QWidget, QApplication):
@@ -115,8 +114,9 @@ class SecondWindow(QWidget, QApplication):
         self.tree_frame = QFrame(self)
         self.tree_frame.setStyleSheet("background-color: #003c72;")
         self.tree_frame.setGeometry(0, 0, width, height)
+        path = get_image()
         self.pixmap = QPixmap()
-        self.pixmap.loadFromData(img_data)
+        self.pixmap.load(path)
         self.imagen = QLabel(self.tree_frame)
         resized_pixmap = self.pixmap.scaled(
             180, 180, Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -664,7 +664,7 @@ class SecondWindow(QWidget, QApplication):
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
             file_name = f'Subida_Sj_{selected_localidad.upper()}_{
                 selected_categoria.upper()}_{timestamp}.xlsx'
-            script_dir = os.path.dirname(os.path.abspath(__file__))
+            script_dir = get_base_path()
             new_file_path = os.path.join(script_dir, file_name)
             columnas_a_quitar = [
                 'Código + Descripción del producto a despachar duplicado 1',
@@ -730,7 +730,7 @@ class SecondWindow(QWidget, QApplication):
         elif tipo == 'error':
             msg_box.setIcon(QMessageBox.Critical)
 
-        msg_box.exec_()
+        msg_box.exec()
 
 
 if __name__ == "__main__":
