@@ -668,9 +668,9 @@ class SecondWindow(QWidget, QApplication):
             columns = ['Sku', 'Cantidad', 'Precio total', 'UOM Prim',
                        'Branchplant Origen', 'Branchplant Destino']
             df = pd.DataFrame(filtered_data, columns=columns)
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            timestamp = datetime.now()
             file_name = f'Subida_Sj_{selected_localidad.upper()}_{
-                selected_categoria.upper()}_{timestamp}.xlsx'
+                selected_categoria.upper()}_{timestamp.strftime('%Y%m%d%H%M%S')}.xlsx'
             script_dir = get_app_path()
             new_file_path = os.path.join(script_dir, file_name)
             columnas_a_quitar = [
@@ -685,9 +685,11 @@ class SecondWindow(QWidget, QApplication):
                 columns=columnas_a_quitar, errors='ignore')
 
             df_iteracion = df_filtrado.copy()
-            df_iteracion.insert(0, 'Iteración', self.iteraciones + 1)
             df_iteracion.insert(
-                1, 'Fecha Data', self.original_df['Fecha Data'].iloc[0])
+                0, 'Fecha Data', self.original_df['Fecha Data'].iloc[0])
+            df_iteracion.insert(1, 'Iteración', self.iteraciones + 1)
+            df_iteracion.insert(2, 'Fecha Iteración',
+                                pd.to_datetime(timestamp))
             self.historial_iteraciones.append(df_iteracion)
 
             df_final = pd.concat(self.historial_iteraciones, ignore_index=True)
