@@ -367,7 +367,8 @@ class SecondWindow(QWidget, QApplication):
 
         # Asegurarse de que las columnas existan en el DataFrame, si no, agregarlas
         for col in ['Código + Descripción del producto a despachar duplicado 1', 'Inv en Origen TM dupli', "Inv Final en Origen TM", 'Paletas Sugeridas', 'Nuevo % Simulado',
-                    'Corr. Paletas', 'Inv Final Simulado', '% Con Corrección', 'Código + Descripción del producto a despachar duplicado 2',
+                    'Corr. Paletas', 'Inv Final Simulado', '% Con Corrección', 'TM Con Corrección',
+                    'Código + Descripción del producto a despachar duplicado 2',
                     '% Target Original dupli', '% Con Corrección dupli']:
             if col not in self.df.columns:
                 # Si no existe, la columna se agrega con valor 0
@@ -375,7 +376,7 @@ class SecondWindow(QWidget, QApplication):
 
         # Cambiar el dtype de las columnas específicas a float
         columns_to_float = ['Inv Final Simulado',
-                            '% Con Corrección', '% Con Corrección dupli']
+                            '% Con Corrección', 'TM Con Corrección', '% Con Corrección dupli']
         self.df[columns_to_float] = self.df[columns_to_float].astype(float)
 
         # Redondear a 5 decimales las columnas numéricas específicas
@@ -479,6 +480,7 @@ class SecondWindow(QWidget, QApplication):
                     filtered_df.at[idx, 'Nuevo % Simulado'] = nuevo_percent
                     filtered_df.at[idx, 'Inv Final Simulado'] = invfinal
                     filtered_df.at[idx, '% Con Corrección'] = nuevo_percent
+                    filtered_df.at[idx, 'TM Con Corrección'] = Paleta_a_Tm
                     filtered_df.at[idx,
                                    '% Con Corrección dupli'] = nuevo_percent
                     filtered_df.at[idx, '% Target Original'] = TargetOriginal
@@ -511,9 +513,9 @@ class SecondWindow(QWidget, QApplication):
                 self.table.setItem(row_idx, col_idx, item)
                 if col_idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]:  # Gris
                     item.setBackground(QColor(169, 169, 169))  # Gris
-                elif col_idx in range(15, 23):  # Azul
+                elif col_idx in range(15, 24):  # Azul
                     item.setBackground(QColor(173, 216, 230))  # Azul claro
-                elif col_idx in range(23, 26):  # Verde
+                elif col_idx in range(24, 27):  # Verde
                     item.setBackground(QColor(144, 238, 144))  # Verde claro
                 self.table.setItem(row_idx, col_idx, item)
 
@@ -561,12 +563,18 @@ class SecondWindow(QWidget, QApplication):
             item2 = QTableWidgetItem(str(inv_final2))
             self.table.setItem(row, 21, item2)
             item2.setBackground(QColor(173, 216, 230))  # Azul claro
+
             valor = f"{valor:.2f}%"
             item = QTableWidgetItem(valor)
-            item3 = QTableWidgetItem(valor)
             self.table.setItem(row, 22, item)
             item.setBackground(QColor(173, 216, 230))  # Azul claro
-            self.table.setItem(row, 25, item3)
+
+            item4 = QTableWidgetItem(str(Paleta_A_TM))
+            self.table.setItem(row, 23, item4)
+            item4.setBackground(QColor(173, 216, 230))  # Azul claro
+
+            item3 = QTableWidgetItem(valor)
+            self.table.setItem(row, 26, item3)
             item3.setBackground(QColor(144, 238, 144))  # Verde claro
 
             self.suma_total = 0
@@ -777,9 +785,10 @@ formado app
 20 Corrección de Paletas
 21 Inv Final Simulado
 22 % Con Corrección
-23 Cod + Descr dupli
-24 % Target Original
-25 % Con Corrección dupli
+23 TM Con Corrección
+24 Cod + Descr dupli
+25 % Target Original dupli
+26 % Con Corrección dupli
 """
 
 """
