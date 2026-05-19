@@ -609,20 +609,25 @@ class SecondWindow(QWidget, QApplication):
             localidad_index = column_names.index('localidad')
             categoria_index = column_names.index('categoria')
             tm_index = column_names.index('paletas sugeridas')
+            corr_index = column_names.index('corr. paletas')
 
             filtered_data = []
             for row in range(self.table.rowCount()):
                 item_localidad = self.table.item(row, localidad_index)
                 item_categoria = self.table.item(row, categoria_index)
                 item_tm = self.table.item(row, tm_index)
+                item_corr = self.table.item(row, corr_index)
 
                 if item_localidad and item_categoria and item_tm:
                     localidad_match = selected_localidad in item_localidad.text().lower()
                     categoria_match = selected_categoria in item_categoria.text(
                     ).lower() or selected_categoria == "todas"
-                    tm_value = float(item_tm.text())
 
-                    if localidad_match and categoria_match and tm_value != 0:
+                    tm_value = float(item_tm.text()) if item_tm else 0
+                    corr_value = float(item_corr.text()) if item_corr else 0
+                    tm_final = tm_value + corr_value
+
+                    if localidad_match and categoria_match and tm_final != 0:
                         self.table.setRowHidden(row, False)
                         row_data = []
                         for col in [5, 16, 6, 0, 1]:
