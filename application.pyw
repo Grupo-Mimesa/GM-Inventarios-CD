@@ -511,7 +511,7 @@ class SecondWindow(QWidget, QApplication):
                 # Se carga en la tabla y se colorea
                 item = QTableWidgetItem(str(value))
                 self.table.setItem(row_idx, col_idx, item)
-                if col_idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]:  # Gris
+                if col_idx in range(15):  # Gris
                     item.setBackground(QColor(169, 169, 169))  # Gris
                 elif col_idx in range(15, 24):  # Azul
                     item.setBackground(QColor(173, 216, 230))  # Azul claro
@@ -539,19 +539,40 @@ class SecondWindow(QWidget, QApplication):
 
     def manual_adjustment(self, row, column):
         if (column == 20):
-            transit_tm = float(self.table.item(row, 12).text())
-            planned_tm = float(self.table.item(row, 11).text())
-            inv_exist_tm = float(self.table.item(row, 10).text())
-            target_inv = float(self.table.item(row, 13).text())
-            paletas_inv = float(self.table.item(row, 18).text())
-            paletas_Agregada = float(self.table.item(row, 20).text())
-            Factor_Conversion = float(self.table.item(row, 7).text())
+            column_names = [self.table.horizontalHeaderItem(
+                i).text().lower() for i in range(self.table.columnCount())]
+
+            factorTMPL_index = column_names.index('factor tm/pl')
+            invOrigen_index = column_names.index('inv en origen tm')
+            invDestino_index = column_names.index('inv en destino tm')
+            planificado_index = column_names.index('planificado tm')
+            transito_index = column_names.index('tránsito tm')
+            targetInv_index = column_names.index('target de inventario')
+            invFinalOrigen_index = column_names.index('inv final en origen tm')
+            sugeridas_index = column_names.index('paletas sugeridas')
+            corregidas_index = column_names.index('corr. paletas')
+            invFinalSimulado_index = column_names.index('inv final simulado')
+            porcentajeCorregido_index = column_names.index('% con corrección')
+            tmCorregido_index = column_names.index('tm con corrección')
+            porcentajeCorregido2_index = column_names.index(
+                '% con corrección dupli')
+
+            transit_tm = float(self.table.item(row, transito_index).text())
+            planned_tm = float(self.table.item(row, planificado_index).text())
+            inv_exist_tm = float(self.table.item(row, invDestino_index).text())
+            target_inv = float(self.table.item(row, targetInv_index).text())
+            paletas_inv = float(self.table.item(row, sugeridas_index).text())
+            paletas_Agregada = float(
+                self.table.item(row, corregidas_index).text())
+            Factor_Conversion = float(
+                self.table.item(row, factorTMPL_index).text())
+            origen = float(self.table.item(row, invOrigen_index).text())
+
             Paleta_A_TM = Factor_Conversion*(paletas_Agregada+paletas_inv)
-            origen = float(self.table.item(row, 9).text())
 
             origenfinal = round(origen-Paleta_A_TM, 5)
             item3 = QTableWidgetItem(str(origenfinal))
-            self.table.setItem(row, 17, item3)
+            self.table.setItem(row, invFinalOrigen_index, item3)
             item3.setBackground(QColor(173, 216, 230))
 
             valor = ((transit_tm + planned_tm + inv_exist_tm +
@@ -561,25 +582,25 @@ class SecondWindow(QWidget, QApplication):
             inv_final2 = round(Paleta_A_TM+transit_tm +
                                planned_tm+inv_exist_tm, 2)
             item2 = QTableWidgetItem(str(inv_final2))
-            self.table.setItem(row, 21, item2)
+            self.table.setItem(row, invFinalSimulado_index, item2)
             item2.setBackground(QColor(173, 216, 230))  # Azul claro
 
             valor = f"{valor:.2f}%"
             item = QTableWidgetItem(valor)
-            self.table.setItem(row, 22, item)
+            self.table.setItem(row, porcentajeCorregido_index, item)
             item.setBackground(QColor(173, 216, 230))  # Azul claro
 
             item4 = QTableWidgetItem(str(Paleta_A_TM))
-            self.table.setItem(row, 23, item4)
+            self.table.setItem(row, tmCorregido_index, item4)
             item4.setBackground(QColor(173, 216, 230))  # Azul claro
 
             item3 = QTableWidgetItem(valor)
-            self.table.setItem(row, 26, item3)
+            self.table.setItem(row, porcentajeCorregido2_index, item3)
             item3.setBackground(QColor(144, 238, 144))  # Verde claro
 
             self.suma_total = 0
             for fila in range(self.table.rowCount()):
-                item = self.table.item(fila, 20)
+                item = self.table.item(fila, corregidas_index)
                 if item is not None:
                     self.suma_total += float(item.text())
             self.label_resumen.setText(f"Total paletas a enviar: {
@@ -608,6 +629,11 @@ class SecondWindow(QWidget, QApplication):
 
             localidad_index = column_names.index('localidad')
             categoria_index = column_names.index('categoria')
+            codDescr_index = column_names.index(
+                'código + descripción del producto a despachar')
+            factorTMPL_index = column_names.index('factor tm/pl')
+            factorPrimPL_index = column_names.index('factor prim/pl')
+            invFinalOrigen_index = column_names.index('inv final en origen tm')
             tm_index = column_names.index('paletas sugeridas')
             corr_index = column_names.index('corr. paletas')
 
@@ -637,14 +663,17 @@ class SecondWindow(QWidget, QApplication):
                                 if col == 5:
                                     text = text.split(' ')[0]
                                 elif col == 16:
-                                    item_col15 = self.table.item(row, 18)
-                                    item_col14 = self.table.item(row, 8)
-                                    item_col18 = self.table.item(row, 20)
-                                    if item_col18 and item_col14:
+                                    item_Sugeridas = self.table.item(
+                                        row, tm_index)
+                                    item_FactorPrim = self.table.item(
+                                        row, factorPrimPL_index)
+                                    item_Corregidas = self.table.item(
+                                        row, corr_index)
+                                    if item_Corregidas and item_FactorPrim:
                                         valor = (
-                                            float(item_col15.text()) + float(item_col18.text()))
+                                            float(item_Sugeridas.text()) + float(item_Corregidas.text()))
                                         valor2 = int(
-                                            valor * float(item_col14.text()))
+                                            valor * float(item_FactorPrim.text()))
                                         valor3 = round(valor2, 2)
                                         text = str(valor3)
                                     else:
@@ -659,16 +688,16 @@ class SecondWindow(QWidget, QApplication):
                     else:
                         pass
                 for idx, row2 in self.df.iterrows():
-                    if row2['Código + Descripción del producto a despachar'] == self.table.item(row, 5).text():
+                    if row2['Código + Descripción del producto a despachar'] == self.table.item(row, codDescr_index).text():
                         self.df.at[idx, 'Inv en Origen TM'] = float(
-                            self.table.item(row, 17).text())
+                            self.table.item(row, invFinalOrigen_index).text())
                         if row2['Localidad'].lower() == selected_localidad:
                             paletas_inv = float(
-                                self.table.item(row, 18).text())
+                                self.table.item(row, tm_index).text())
                             paletas_Agregada = float(
-                                self.table.item(row, 20).text())
+                                self.table.item(row, corr_index).text())
                             Factor_Conversion = float(
-                                self.table.item(row, 7).text())
+                                self.table.item(row, factorTMPL_index).text())
                             Paleta_A_TM = Factor_Conversion * \
                                 (paletas_Agregada+paletas_inv)
                             self.df.at[idx, 'Planificado TM'] += Paleta_A_TM
