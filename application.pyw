@@ -38,8 +38,9 @@ class MainWindow(QWidget):
         self.layout = QVBoxLayout()
         # Centrar el título
         self.label_titulo = QLabel(
-            "Aplicacion para Control de Inventario de Centros de Distribucion Grupo Mimesa")
-        self.label_titulo.setStyleSheet("color: white; font: 12pt Arial;")
+            "Control de Inventario de Centros de Distribucion Grupo Mimesa")
+        self.label_titulo.setStyleSheet(
+            "color: white; font: 12pt Arial; font-weight: bold;")
         self.label_titulo.setAlignment(Qt.AlignCenter)
         self.layout.addWidget(self.label_titulo)
         # Centrar el status label
@@ -166,15 +167,15 @@ class SecondWindow(QWidget, QApplication):
             }
         """)
         self.localidades_combobox.setFixedSize(
-            150, 50)  # Fijar tamaño del ComboBox
+            160, 50)  # Fijar tamaño del ComboBox
         self.localidades_combobox.move(15, 45)
         self.localidades_combobox.currentIndexChanged.connect(
             self.update_table)
 
-        # OrdenarPor
-        self.label_OrdenarPor = QLabel("Ordenar Por", self.tree_frame)
+        # Ordenar por ComboBox
+        self.label_OrdenarPor = QLabel("Ordenar por", self.tree_frame)
         self.label_OrdenarPor.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_OrdenarPor.move(200, 27)
+        self.label_OrdenarPor.move(204, 27)
         self.OrdenarPor_combobox = QComboBox(self.tree_frame)
         self.OrdenarPor_combobox.addItems(["", "Código + Descripción del producto a despachar", "Inv en Origen TM", "Inv en Destino TM", "Planificado TM", "Tránsito TM",
                                            "% Target Original", "Target de Inventario", "Paletas Sugeridas", "Nuevo % Simulado", "Corr. Paletas", "Inv Final Simulado", "% Con Corrección"])
@@ -201,68 +202,12 @@ class SecondWindow(QWidget, QApplication):
                 background-color: #1c3c6b;
             }
         """)
-        self.OrdenarPor_combobox.setFixedSize(
-            200, 50)  # Fijar tamaño del ComboBox
-        self.OrdenarPor_combobox.move(190, 45)
+        self.OrdenarPor_combobox.setFixedSize(200, 50)
+        self.OrdenarPor_combobox.move(192, 45)
         self.OrdenarPor_combobox.currentIndexChanged.connect(self.update_table)
 
-        # label Nivel
-        self.label_Nivel = QLabel("Nivel", self.tree_frame)
-        self.label_Nivel.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_Nivel.move(200, 100)
-        self.Nivel_combobox = QComboBox(self.tree_frame)
-        self.Nivel_combobox.addItems(["", "Mayor", "Menor"])
-        self.Nivel_combobox.setStyleSheet("""
-            QComboBox {
-                background-color: #94cc1c;
-                border: 1px solid #ccc;
-                padding: 5px;
-                margin: 10px;
-                color: white;
-                font-family: Arial;
-                font-size: 14px;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #1c3c6b;
-                border: 1px solid #ccc;
-                padding: 5px;
-                color: white;
-                font-family: Arial;
-                font-size: 14px;
-            }
-            QComboBox::drop-down {
-                border: 1px solid #1c3c6b;
-                background-color: #1c3c6b;
-            }
-        """)
-        self.Nivel_combobox.setFixedSize(150, 50)  # Fijar tamaño del ComboBox
-        self.Nivel_combobox.move(190, 125)
-        self.Nivel_combobox.currentIndexChanged.connect(self.update_table)
-
-        # Generar SJ Botón dentro del QFrame
-        self.button1 = QPushButton("Generar Propuesta de SJ", self.tree_frame)
-        self.button1.setStyleSheet(
-            "background-color: #94cc1c; color: white; font: 14pt Arial;")
-        self.button1.setFixedSize(250, 55)
-        self.button1.move(width-250-25, 110)
-        self.button1.clicked.connect(self.save_sj)
-
-        # Reiniciar proceso Botón dentro del QFrame
-        self.reset_table_button = QPushButton("Reiniciar", self.tree_frame)
-        self.reset_table_button.setStyleSheet(
-            "background-color: #94cc1c; color: white; font: 14pt Arial;")
-        self.reset_table_button.setFixedSize(100, 32)
-        self.reset_table_button.move(800, 133)
-        self.reset_table_button.clicked.connect(self.reset_table)
-
-        # Iteraciones Label
-        self.label_iteraciones = QLabel(
-            f"Iteraciones: {self.iteraciones}", self.tree_frame)
-        self.label_iteraciones.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_iteraciones.move(650, 137)
-
         # Categoria ComboBox
-        self.label_categoria = QLabel("Categoria", self.tree_frame)
+        self.label_categoria = QLabel("Categoría", self.tree_frame)
         self.label_categoria.setStyleSheet("color: white; font: 14pt Arial;")
         self.label_categoria.move(25, 100)
         self.categorias_combobox = QComboBox(self.tree_frame)
@@ -290,9 +235,65 @@ class SecondWindow(QWidget, QApplication):
                 background-color: #1c3c6b;
             }
         """)
-        self.categorias_combobox.setFixedSize(150, 50)
+        self.categorias_combobox.setFixedSize(160, 50)
         self.categorias_combobox.move(15, 125)
         self.categorias_combobox.currentIndexChanged.connect(self.update_table)
+
+        # label Nivel
+        self.label_Nivel = QLabel("Nivel", self.tree_frame)
+        self.label_Nivel.setStyleSheet("color: white; font: 14pt Arial;")
+        self.label_Nivel.move(204, 100)
+        self.Nivel_combobox = QComboBox(self.tree_frame)
+        self.Nivel_combobox.addItems(["", "Mayor", "Menor"])
+        self.Nivel_combobox.setStyleSheet("""
+            QComboBox {
+                background-color: #94cc1c;
+                border: 1px solid #ccc;
+                padding: 5px;
+                margin: 10px;
+                color: white;
+                font-family: Arial;
+                font-size: 14px;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #1c3c6b;
+                border: 1px solid #ccc;
+                padding: 5px;
+                color: white;
+                font-family: Arial;
+                font-size: 14px;
+            }
+            QComboBox::drop-down {
+                border: 1px solid #1c3c6b;
+                background-color: #1c3c6b;
+            }
+        """)
+        self.Nivel_combobox.setFixedSize(200, 50)  # Fijar tamaño del ComboBox
+        self.Nivel_combobox.move(192, 125)
+        self.Nivel_combobox.currentIndexChanged.connect(self.update_table)
+
+        # Generar SJ Botón dentro del QFrame
+        self.save_sj_button = QPushButton(
+            "Generar Propuesta de SJ", self.tree_frame)
+        self.save_sj_button.setStyleSheet(
+            "background-color: #94cc1c; color: white; font: 14pt Arial; font-weight: bold;")
+        self.save_sj_button.setFixedSize(250, 54)
+        self.save_sj_button.move(width-250-25, 110)
+        self.save_sj_button.clicked.connect(self.save_sj)
+
+        # Reiniciar proceso Botón dentro del QFrame
+        self.reset_table_button = QPushButton("Reiniciar", self.tree_frame)
+        self.reset_table_button.setStyleSheet(
+            "background-color: #94cc1c; color: white; font: 13pt Arial;")
+        self.reset_table_button.setFixedSize(100, 40)
+        self.reset_table_button.move(800, 133)
+        self.reset_table_button.clicked.connect(self.reset_table)
+
+        # Iteraciones Label
+        self.label_iteraciones = QLabel(
+            f"Iteraciones: {self.iteraciones}", self.tree_frame)
+        self.label_iteraciones.setStyleSheet("color: white; font: 14pt Arial;")
+        self.label_iteraciones.move(650, 137)
 
         # Definir La tabla
         self.table = QTableWidget(self.tree_frame)
@@ -344,7 +345,8 @@ class SecondWindow(QWidget, QApplication):
         # Definir las nuevas columnas
         self.new_columns = [
             'Branchplant Origen', 'Branchplant Destino', 'Localidad', 'Categoria', 'FAMILIA 3',
-            'Código + Descripción del producto a despachar', 'UOM Prim', 'Factor TM/PL', 'Factor Prim/PL', 'Inv en Origen TM',
+            'Código + Descripción del producto a despachar', 'UOM Prim', 'Factor TM/PL', 'Factor Prim/PL',
+            'Inv en Origen TM', 'Target en Origen', '%Target Origen',
             'Inv en Destino TM', 'Planificado TM', 'Tránsito TM', 'Target de Inventario',
             '% Target Original'
         ]
@@ -366,7 +368,7 @@ class SecondWindow(QWidget, QApplication):
         self.df = self.df.fillna(0)
 
         # Asegurarse de que las columnas existan en el DataFrame, si no, agregarlas
-        for col in ['Código + Descripción del producto a despachar duplicado 1', 'Inv en Origen TM dupli', "Inv Final en Origen TM", 'Paletas Sugeridas', 'Nuevo % Simulado',
+        for col in ['Código + Descripción del producto a despachar duplicado 1', 'Inv en Origen TM dupli', "Inv Final en Origen TM", '%Target Final en Origen', 'Paletas Sugeridas', 'Nuevo % Simulado',
                     'Corr. Paletas', 'Inv Final Simulado', '% Con Corrección', 'TM Con Corrección',
                     'Código + Descripción del producto a despachar duplicado 2',
                     '% Target Original dupli', '% Con Corrección dupli']:
@@ -415,6 +417,7 @@ class SecondWindow(QWidget, QApplication):
         filtered_df['% Target Original dupli'] = filtered_df['% Target Original']
         filtered_df['Inv en Origen TM dupli'] = filtered_df['Inv en Origen TM']
         filtered_df['Inv Final en Origen TM'] = filtered_df['Inv en Origen TM']
+        filtered_df['%Target Final en Origen'] = filtered_df['%Target Origen']
 
         # Palabra de control para el ciclo
         paletas_agregadas = 0
@@ -465,6 +468,7 @@ class SecondWindow(QWidget, QApplication):
                 paletas_inv = float(row['Paletas Sugeridas'])
                 Factor_Conversion = float(row["Factor TM/PL"])
                 origen = float(row["Inv en Origen TM"])
+                target_origen = float(row["Target en Origen"])
 
                 try:
                     # Se calcula TargetOriginal
@@ -486,12 +490,16 @@ class SecondWindow(QWidget, QApplication):
                     filtered_df.at[idx, '% Target Original'] = TargetOriginal
                     filtered_df.at[idx, 'Inv Final en Origen TM'] = round(
                         origen-Paleta_a_Tm, 5)
+                    filtered_df.at[idx, '%Target Final en Origen'] = round(
+                        origen-Paleta_a_Tm, 5)/target_origen * 100
                     filtered_df.at[idx,
                                    '% Target Original dupli'] = TargetOriginal
                 except:
                     pass
+
                 # Se vuelve a hacer la copia de la tabla con las filas que no cumplen eliminadas
                 df_no_procesados = filtered_df.drop(procesados)
+
         # Se aplican los filtros
         if ordenar_por and nivel:
             ascending = True if nivel == "Menor" else False
@@ -500,23 +508,44 @@ class SecondWindow(QWidget, QApplication):
         # Se parsea y se la agrega a los campos necesario el %
         self.table.setRowCount(filtered_df.shape[0])
         for row_idx, (_, row) in enumerate(filtered_df.iterrows()):
+            try:
+                target_final_origen = round(
+                    float(row['%Target Final en Origen']), 5)
+                con_correccion = round(
+                    float(row['% Con Corrección']), 5)
+                sugeridas = float(row['Paletas Sugeridas'])
+                corregidas = float(row['Corr. Paletas'])
+
+                fila_roja = (
+                    target_final_origen < con_correccion and sugeridas + corregidas > 0
+                )
+            except:
+                fila_roja = False
+
             for col_idx, col in enumerate(self.columns_to_display):
                 value = row[col]
                 if col in ['Inv Final Simulado']:
                     value = round(value, 5)
-                if col in ['Nuevo % Simulado', '% Con Corrección', '% Con Corrección dupli', '% Target Original', '% Target Original dupli']:
+                if col in ['%Target Final en Origen', 'Nuevo % Simulado', '% Con Corrección', '% Con Corrección dupli', '% Target Original', '% Target Original dupli']:
                     value = round(float(value), 5)
                     value = f"{value:.2f}%"
 
                 # Se carga en la tabla y se colorea
                 item = QTableWidgetItem(str(value))
-                self.table.setItem(row_idx, col_idx, item)
-                if col_idx in range(15):  # Gris
-                    item.setBackground(QColor(169, 169, 169))  # Gris
-                elif col_idx in range(15, 24):  # Azul
-                    item.setBackground(QColor(173, 216, 230))  # Azul claro
-                elif col_idx in range(24, 27):  # Verde
-                    item.setBackground(QColor(144, 238, 144))  # Verde claro
+
+                if fila_roja:
+                    color_base = QColor(255, 150, 150)  # Rojo claro
+                else:
+                    if col_idx in range(17):  # Gris
+                        color_base = QColor(169, 169, 169)  # Gris
+                    elif col_idx in range(17, 27):  # Azul
+                        color_base = QColor(173, 216, 230)  # Azul claro
+                    elif col_idx in range(27, 30):  # Verde
+                        color_base = QColor(144, 238, 144)  # Verde claro
+                    else:
+                        color_base = QColor(255, 255, 255)  # Blanco
+
+                item.setBackground(color_base)
                 self.table.setItem(row_idx, col_idx, item)
 
         self.tm_adicional = 0
@@ -524,11 +553,11 @@ class SecondWindow(QWidget, QApplication):
             f"Total paletas a enviar: {paletas_agregadas}")
         self.label_resumen.adjustSize()
 
-        # Bloquear edición en todas las columnas excepto la columna 20
+        # Bloquear edición en todas las columnas excepto la columna 23
         for row in range(self.table.rowCount()):
             for col in range(self.table.columnCount()):
                 item = self.table.item(row, col)
-                if col != 20:  # Bloquear edición en todas las columnas excepto la columna 20
+                if col != 23:  # Bloquear edición en todas las columnas excepto la columna 23
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
         self.table.setEditTriggers(QAbstractItemView.DoubleClicked)
@@ -538,17 +567,22 @@ class SecondWindow(QWidget, QApplication):
         self.current_df = filtered_df.copy()
 
     def manual_adjustment(self, row, column):
-        if (column == 20):
+
+        if (column == 23):
+
             column_names = [self.table.horizontalHeaderItem(
                 i).text().lower() for i in range(self.table.columnCount())]
 
             factorTMPL_index = column_names.index('factor tm/pl')
             invOrigen_index = column_names.index('inv en origen tm')
+            targetOrigen_index = column_names.index('target en origen')
             invDestino_index = column_names.index('inv en destino tm')
             planificado_index = column_names.index('planificado tm')
             transito_index = column_names.index('tránsito tm')
             targetInv_index = column_names.index('target de inventario')
             invFinalOrigen_index = column_names.index('inv final en origen tm')
+            porcentajeTargetFinalOrigen_index = column_names.index(
+                '%target final en origen')
             sugeridas_index = column_names.index('paletas sugeridas')
             corregidas_index = column_names.index('corr. paletas')
             invFinalSimulado_index = column_names.index('inv final simulado')
@@ -567,36 +601,42 @@ class SecondWindow(QWidget, QApplication):
             Factor_Conversion = float(
                 self.table.item(row, factorTMPL_index).text())
             origen = float(self.table.item(row, invOrigen_index).text())
+            target_origen = float(self.table.item(
+                row, targetOrigen_index).text())
 
             Paleta_A_TM = Factor_Conversion*(paletas_Agregada+paletas_inv)
 
             origenfinal = round(origen-Paleta_A_TM, 5)
-            item3 = QTableWidgetItem(str(origenfinal))
-            self.table.setItem(row, invFinalOrigen_index, item3)
-            item3.setBackground(QColor(173, 216, 230))
+            item_origenfinal = QTableWidgetItem(str(origenfinal))
+            self.table.setItem(row, invFinalOrigen_index, item_origenfinal)
 
-            valor = ((transit_tm + planned_tm + inv_exist_tm +
-                     Paleta_A_TM) / target_inv) * 100
-            valor = round(valor, 2)
+            targetFinalOrigen = round(origenfinal/target_origen*100, 2)
+            item_targetFinalOrigen = QTableWidgetItem(
+                f"{targetFinalOrigen:.2f}%")
+            self.table.setItem(
+                row, porcentajeTargetFinalOrigen_index, item_targetFinalOrigen)
 
             inv_final2 = round(Paleta_A_TM+transit_tm +
                                planned_tm+inv_exist_tm, 2)
-            item2 = QTableWidgetItem(str(inv_final2))
-            self.table.setItem(row, invFinalSimulado_index, item2)
-            item2.setBackground(QColor(173, 216, 230))  # Azul claro
+            item_inv_final2 = QTableWidgetItem(str(inv_final2))
+            self.table.setItem(row, invFinalSimulado_index, item_inv_final2)
 
-            valor = f"{valor:.2f}%"
-            item = QTableWidgetItem(valor)
-            self.table.setItem(row, porcentajeCorregido_index, item)
-            item.setBackground(QColor(173, 216, 230))  # Azul claro
+            porcCorregido = ((transit_tm + planned_tm + inv_exist_tm +
+                              Paleta_A_TM) / target_inv) * 100
+            porcCorregido = round(porcCorregido, 2)
+            porcCorregido = f"{porcCorregido:.2f}%"
+            item_porcCorregido = QTableWidgetItem(porcCorregido)
+            self.table.setItem(
+                row, porcentajeCorregido_index, item_porcCorregido)
 
-            item4 = QTableWidgetItem(str(Paleta_A_TM))
-            self.table.setItem(row, tmCorregido_index, item4)
-            item4.setBackground(QColor(173, 216, 230))  # Azul claro
+            item_tmCorregido = QTableWidgetItem(str(Paleta_A_TM))
+            self.table.setItem(row, tmCorregido_index, item_tmCorregido)
 
-            item3 = QTableWidgetItem(valor)
-            self.table.setItem(row, porcentajeCorregido2_index, item3)
-            item3.setBackground(QColor(144, 238, 144))  # Verde claro
+            item_porcCorregido2 = QTableWidgetItem(porcCorregido)
+            self.table.setItem(
+                row, porcentajeCorregido2_index, item_porcCorregido2)
+
+            self.set_row_color(row)
 
             self.suma_total = 0
             for fila in range(self.table.rowCount()):
@@ -608,6 +648,62 @@ class SecondWindow(QWidget, QApplication):
             self.label_resumen.adjustSize()
         else:
             pass
+
+    def set_row_color(self, row):
+
+        try:
+            column_names = [
+                self.table.horizontalHeaderItem(i).text().lower()
+                for i in range(self.table.columnCount())
+            ]
+
+            porcentaje_target_index = column_names.index(
+                '%target final en origen')
+            porcentaje_corregido_index = column_names.index('% con corrección')
+            sugeridas_index = column_names.index('paletas sugeridas')
+            corregidas_index = column_names.index('corr. paletas')
+
+            target_final_origen = float(
+                self.table.item(row, porcentaje_target_index)
+                .text()
+                .replace('%', '')
+            )
+            con_correccion = float(
+                self.table.item(row, porcentaje_corregido_index)
+                .text()
+                .replace('%', '')
+            )
+
+            sugeridas = float(self.table.item(row, sugeridas_index).text())
+            corregidas = float(self.table.item(row, corregidas_index).text())
+
+            fila_roja = (
+                target_final_origen < con_correccion and
+                sugeridas + corregidas > 0
+            )
+
+        except:
+            fila_roja = False
+
+        for col in range(self.table.columnCount()):
+
+            item = self.table.item(row, col)
+
+            if item is None:
+                continue
+
+            if fila_roja:
+                item.setBackground(QColor(255, 150, 150))
+            else:
+                # Colores originales
+                if col in range(17):
+                    item.setBackground(QColor(169, 169, 169))
+                elif col in range(17, 27):
+                    item.setBackground(QColor(173, 216, 230))
+                elif col in range(27, 30):
+                    item.setBackground(QColor(144, 238, 144))
+                else:
+                    item.setBackground(QColor(255, 255, 255))
 
     def save_sj(self):
         try:
@@ -758,20 +854,6 @@ class SecondWindow(QWidget, QApplication):
         self.set_dataframe()
         self.update_table()
 
-    def porcentaje_a_float(self, porcentaje_str):
-        try:
-            # Verifica si el valor es un porcentaje válido
-            if isinstance(porcentaje_str, str) and porcentaje_str.endswith('%'):
-                return float(porcentaje_str.strip('%')) / 100
-            # Si el valor ya es un número, simplemente devuélvelo
-            elif isinstance(porcentaje_str, (int, float)):
-                return float(porcentaje_str)
-            else:
-                raise ValueError(f"Valor inesperado: {porcentaje_str}")
-        except ValueError as e:
-            print(f"Error al convertir porcentaje: {e}")
-            return 0.0  # O cualquier valor por defecto que consideres apropiado
-
     def show_message(self, titulo, mensaje, tipo='informacion'):
         msg_box = QMessageBox()
         msg_box.setWindowTitle(titulo)
@@ -806,23 +888,26 @@ formado app
 7 Factor TM/PL
 8 Factor Prim/PL
 9 Inv en Origen TM
-10 Inv en Destino TM
-11 Planificado TM
-12 Tránsito TM
-13 Target de Inventario
-14 % Target Original 
-15 Cod + Descr dupli
-16 Inv en Origen TM ref
-17 Inv en Origen Final TM
-18 Paletas Sugeridas 
-19 Nuevo % Simulado 
-20 Corrección de Paletas
-21 Inv Final Simulado
-22 % Con Corrección
-23 TM Con Corrección
-24 Cod + Descr dupli
-25 % Target Original dupli
-26 % Con Corrección dupli
+10 Target en Origen
+11 %Target Origen
+12 Inv en Destino TM
+13 Planificado TM
+14 Tránsito TM
+15 Target de Inventario
+16 % Target Original 
+17 Cod + Descr dupli
+18 Inv en Origen TM ref
+19 Inv en Origen Final TM
+20 % Target Final en Origen
+21 Paletas Sugeridas 
+22 Nuevo % Simulado 
+23 Corrección de Paletas
+24 Inv Final Simulado
+25 % Con Corrección
+26 TM Con Corrección
+27 Cod + Descr dupli
+28 % Target Original dupli
+29 % Con Corrección dupli
 """
 
 """
@@ -842,4 +927,9 @@ archivo de excel original
 12 %Target Inv + Trans + Plan (Python)
 13 Max of Factor PL - TM
 14 Max of Factor PL - Prim
+15 Fecha Data
+16 Dscr Criterio Target
+17 Localidad Origen
+18 Target en Origen
+19 %Target Origen
 """
