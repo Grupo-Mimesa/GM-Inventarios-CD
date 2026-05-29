@@ -31,7 +31,8 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Cargar Archivo")
+        self.setWindowTitle(
+            "Cargar Archivo: Reposición de Inventarios de CD Grupo Mimesa")
         self.setFixedSize(600, 462)
         self.setStyleSheet("background-color: #003c72;")
         # Layout principal
@@ -51,14 +52,15 @@ class MainWindow(QWidget):
         # Centrar el botón de seleccionar archivo
         self.button_select_file = QPushButton("Seleccionar archivo")
         self.button_select_file.setStyleSheet(
-            "background-color: #94cc1c; color: white; font: 14pt Arial;")
+            "background-color: #94cc1c; color: white; font: 12pt Arial; padding: 4px 10px;")
         self.button_select_file.clicked.connect(self.open_file_dialog)
         self.layout.addWidget(self.button_select_file,
                               alignment=Qt.AlignCenter)
         # Centrar el botón de listo
         self.button1 = QPushButton("Listo")
         self.button1.setStyleSheet(
-            "background-color: #94cc1c; color: white; font: 14pt Arial;")
+            "background-color: #94cc1c; color: white; font: 14pt Arial; font-weight: bold;")
+        self.button1.setFixedSize(92, 36)
         self.button1.clicked.connect(self.open_second_window)
         self.layout.addWidget(self.button1, alignment=Qt.AlignCenter)
         # Crear imagen logo
@@ -104,7 +106,7 @@ class MainWindow(QWidget):
 class SecondWindow(QWidget, QApplication):
     def __init__(self, file_path):
         super().__init__()
-        self.setWindowTitle("Gestion de Inventario")
+        self.setWindowTitle("Reposición de Inventarios de CD Grupo Mimesa")
         # SI SE QUIERE CAMBIAR LA CANTIDAD DE PALETAS POR DEFECTO CAMBIAR AQUI, POR DEFECTO 30
         self.cantidad_de_paletas_a_enviar = 30
         self.iteraciones = 0
@@ -128,7 +130,7 @@ class SecondWindow(QWidget, QApplication):
         resized_pixmap = self.pixmap.scaled(
             180, 180, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.imagen.setPixmap(resized_pixmap)
-        self.imagen.move(width-180-20, 0)  # (1100, 25)
+        self.imagen.move(width-180-8, 0)  # (1100, 25)
 
         self.set_dataframe()
 
@@ -139,7 +141,8 @@ class SecondWindow(QWidget, QApplication):
 
         # Localidad ComboBox
         self.label_localidad = QLabel("Localidad", self.tree_frame)
-        self.label_localidad.setStyleSheet("color: white; font: 14pt Arial;")
+        self.label_localidad.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 13pt; font-weight: bold;")
         self.label_localidad.move(25, 25)
         self.localidades_combobox = QComboBox(self.tree_frame)
         self.localidades_combobox.addItems(self.localidades_unicas)
@@ -152,6 +155,10 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                font-weight: bold;               
+            }
+            QComboBox:hover {
+                background-color: #a3de20;
             }
             QComboBox QAbstractItemView {
                 background-color: #1c3c6b;
@@ -160,10 +167,22 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                selection-background-color: #94cc1c;
             }
             QComboBox::drop-down {
+                width: 20px;
                 border: 1px solid #1c3c6b;
                 background-color: #1c3c6b;
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #94cc1c;
+                color: white;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #94cc1c;
+                color: white;
+                padding: 1px 5px;
+                border: none;
             }
         """)
         self.localidades_combobox.setFixedSize(
@@ -174,7 +193,8 @@ class SecondWindow(QWidget, QApplication):
 
         # Ordenar por ComboBox
         self.label_OrdenarPor = QLabel("Ordenar por", self.tree_frame)
-        self.label_OrdenarPor.setStyleSheet("color: white; font: 14pt Arial;")
+        self.label_OrdenarPor.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 13pt; font-weight: bold;")
         self.label_OrdenarPor.move(204, 27)
         self.OrdenarPor_combobox = QComboBox(self.tree_frame)
         self.OrdenarPor_combobox.addItems(["", "Código + Descripción del producto a despachar", "Inv en Origen TM", "Inv en Destino TM", "Planificado TM", "Tránsito TM",
@@ -188,6 +208,10 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                font-weight: bold;               
+            }
+            QComboBox:hover {
+                background-color: #a3de20;
             }
             QComboBox QAbstractItemView {
                 background-color: #1c3c6b;
@@ -196,10 +220,22 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                selection-background-color: #94cc1c;
             }
             QComboBox::drop-down {
+                width: 20px;
                 border: 1px solid #1c3c6b;
                 background-color: #1c3c6b;
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #94cc1c;
+                color: white;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #94cc1c;
+                color: white;
+                padding: 1px 5px;
+                border: none;
             }
         """)
         self.OrdenarPor_combobox.setFixedSize(200, 50)
@@ -208,8 +244,9 @@ class SecondWindow(QWidget, QApplication):
 
         # Categoria ComboBox
         self.label_categoria = QLabel("Categoría", self.tree_frame)
-        self.label_categoria.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_categoria.move(25, 100)
+        self.label_categoria.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 13pt; font-weight: bold;")
+        self.label_categoria.move(25, 107)
         self.categorias_combobox = QComboBox(self.tree_frame)
         self.categorias_combobox.addItems(["TODAS"] + self.categorias_unicas)
         self.categorias_combobox.setStyleSheet("""
@@ -221,6 +258,10 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                font-weight: bold;               
+            }
+            QComboBox:hover {
+                background-color: #a3de20;
             }
             QComboBox QAbstractItemView {
                 background-color: #1c3c6b;
@@ -229,10 +270,22 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                selection-background-color: #94cc1c;
             }
             QComboBox::drop-down {
+                width: 20px;
                 border: 1px solid #1c3c6b;
                 background-color: #1c3c6b;
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #94cc1c;
+                color: white;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #94cc1c;
+                color: white;
+                padding: 1px 5px;
+                border: none;
             }
         """)
         self.categorias_combobox.setFixedSize(160, 50)
@@ -241,8 +294,9 @@ class SecondWindow(QWidget, QApplication):
 
         # label Nivel
         self.label_Nivel = QLabel("Nivel", self.tree_frame)
-        self.label_Nivel.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_Nivel.move(204, 100)
+        self.label_Nivel.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 13pt; font-weight: bold;")
+        self.label_Nivel.move(204, 107)
         self.Nivel_combobox = QComboBox(self.tree_frame)
         self.Nivel_combobox.addItems(["", "Mayor", "Menor"])
         self.Nivel_combobox.setStyleSheet("""
@@ -254,6 +308,10 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                font-weight: bold;               
+            }
+            QComboBox:hover {
+                background-color: #a3de20;
             }
             QComboBox QAbstractItemView {
                 background-color: #1c3c6b;
@@ -262,10 +320,22 @@ class SecondWindow(QWidget, QApplication):
                 color: white;
                 font-family: Arial;
                 font-size: 14px;
+                selection-background-color: #94cc1c;
             }
             QComboBox::drop-down {
+                width: 20px;
                 border: 1px solid #1c3c6b;
                 background-color: #1c3c6b;
+            }
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #94cc1c;
+                color: white;
+            }
+            QComboBox QAbstractItemView::item:selected {
+                background-color: #94cc1c;
+                color: white;
+                padding: 1px 5px;
+                border: none;
             }
         """)
         self.Nivel_combobox.setFixedSize(200, 50)  # Fijar tamaño del ComboBox
@@ -278,22 +348,23 @@ class SecondWindow(QWidget, QApplication):
         self.save_sj_button.setStyleSheet(
             "background-color: #94cc1c; color: white; font: 14pt Arial; font-weight: bold;")
         self.save_sj_button.setFixedSize(250, 54)
-        self.save_sj_button.move(width-250-25, 110)
+        self.save_sj_button.move(width/2-125, 113)
         self.save_sj_button.clicked.connect(self.save_sj)
-
-        # Reiniciar proceso Botón dentro del QFrame
-        self.reset_table_button = QPushButton("Reiniciar", self.tree_frame)
-        self.reset_table_button.setStyleSheet(
-            "background-color: #94cc1c; color: white; font: 13pt Arial;")
-        self.reset_table_button.setFixedSize(100, 40)
-        self.reset_table_button.move(800, 133)
-        self.reset_table_button.clicked.connect(self.reset_table)
 
         # Iteraciones Label
         self.label_iteraciones = QLabel(
             f"Iteraciones: {self.iteraciones}", self.tree_frame)
-        self.label_iteraciones.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_iteraciones.move(650, 137)
+        self.label_iteraciones.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 14pt; font-weight: bold; text-align: right;")
+        self.label_iteraciones.move(width - 150, 100)
+
+        # Reiniciar proceso Botón dentro del QFrame
+        self.reset_table_button = QPushButton("Reiniciar", self.tree_frame)
+        self.reset_table_button.setStyleSheet(
+            "background-color: #94cc1c; color: white; font-family: Arial; font-size: 13pt;")
+        self.reset_table_button.setFixedSize(100, 40)
+        self.reset_table_button.move(width - 100 - 25, 127)
+        self.reset_table_button.clicked.connect(self.reset_table)
 
         # Definir La tabla
         self.table = QTableWidget(self.tree_frame)
@@ -303,7 +374,7 @@ class SecondWindow(QWidget, QApplication):
         # Definir label Resumen
         self.label_resumen = QLabel(f"", self.tree_frame)  # Resumen
         self.label_resumen.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_resumen.move(650, 75)  # (730, 25)
+        self.label_resumen.move(650, 84)  # (730, 25)
         self.label_resumen.adjustSize()
 
         # Definir TextField Resumen
@@ -314,16 +385,17 @@ class SecondWindow(QWidget, QApplication):
 
         # Definir label paletas
         self.label_paletas = QLabel("Cantidad de Paletas", self.tree_frame)
-        self.label_paletas.setStyleSheet("color: white; font: 14pt Arial;")
-        self.label_paletas.move(425, 75)
+        self.label_paletas.setStyleSheet(
+            "color: white; font-family: Arial; font-size: 13pt; font-weight: bold;")
+        self.label_paletas.move(417, 27)
 
         # Definir TextFiel de paletas
-        self.line_edit = QLineEdit(self.tree_frame)
-        self.line_edit.setText(str(self.cantidad_de_paletas_a_enviar))
-        self.line_edit.setStyleSheet(
+        self.paletas_textfield = QLineEdit(self.tree_frame)
+        self.paletas_textfield.setText(str(self.cantidad_de_paletas_a_enviar))
+        self.paletas_textfield.setStyleSheet(
             "color: black; font: 14pt Arial; background-color: white; text-align:center;")
-        self.line_edit.setGeometry(460, 100, 100, 25)
-        self.line_edit.textChanged.connect(self.update_table)
+        self.paletas_textfield.setGeometry(415, 53, 100, 35)
+        self.paletas_textfield.textChanged.connect(self.update_table)
 
         # Rellenar tabla con las columnas
         self.columns_to_display = [col for col in self.df.columns if col not in [
@@ -427,7 +499,7 @@ class SecondWindow(QWidget, QApplication):
         df_no_procesados = filtered_df.drop(procesados)
         # Ciclo infito hasta que paletas_agregadas sea igual a lo seleccionado en el TextField de cuantas palabras
         # Se quieren Agregar
-        while paletas_agregadas < int(self.line_edit.text()):
+        while paletas_agregadas < int(self.paletas_textfield.text()):
             if filtered_df.empty:
                 break
 
@@ -848,7 +920,7 @@ class SecondWindow(QWidget, QApplication):
 
     def reset_table(self):
         self.df = pd.read_excel(self.file_path, skiprows=2)
-        self.line_edit.setText(str(self.cantidad_de_paletas_a_enviar))
+        self.paletas_textfield.setText(str(self.cantidad_de_paletas_a_enviar))
         self.iteraciones = 0
         self.historial_iteraciones = []
         self.set_dataframe()
